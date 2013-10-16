@@ -524,7 +524,7 @@ public class AdHocConferenceChatSession
      * Not implemented.
      */
     @Override
-    public void addChatConference(ChatRoom chatRoom, ChatRoomMember member,
+    public void updateChatConferences(ChatRoom chatRoom, ChatRoomMember member,
         ConferenceDescription cd)
     {
     }

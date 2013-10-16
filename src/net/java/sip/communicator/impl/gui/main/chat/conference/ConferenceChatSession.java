@@ -432,15 +432,6 @@ public class ConferenceChatSession
                     sessionRenderer.addChatContact(chatContact);
             }
             
-            ChatRoom chatRoom = chatRoomWrapper.getChatRoom();
-            if(chatRoom.findCachedConferenceDescription(
-                chatContact.getName()) != null)
-            {
-                ConferenceDescription cd
-                    = chatRoom.removeCachedConferenceDescription(
-                        chatContact.getName());
-                addChatConference(sourceChatRoom, chatRoomMember, cd);
-            }
             /*
              * When the whole list of members of a given chat room is reported,
              * it doesn't make sense to see "ChatContact has joined #ChatRoom"
@@ -492,6 +483,14 @@ public class ConferenceChatSession
                         chatContact, statusMessage);
 
                     sessionRenderer.removeChatContact(chatContact);
+                    
+                    ConferenceDescription cd 
+                        = chatRoomWrapper.getChatRoom()
+                            .removeCachedConferenceDescription(
+                                    chatRoomMember.getName());
+                    if(cd != null)
+                        sessionRenderer.removeChatConferenceCall(cd);
+                    
                     break;
                 }
             }
@@ -675,19 +674,40 @@ public class ConferenceChatSession
     {
         if(!evt.getChatRoom().equals(chatRoomWrapper.getChatRoom()))
             return;
-        addChatConference(evt.getChatRoom(), evt.getMember(),
-            evt.getConferenceDescription());
+        
+        ConferenceDescription cd = evt.getConferenceDescription();
+        if(evt.getType() 
+            == ChatRoomConferencePublishedEvent.CONFERENCE_DESCRIPTION_SENT)
+        {
+            sessionRenderer.chatConferenceCreated(cd);
+        }
+        else if(evt.getType() 
+            == ChatRoomConferencePublishedEvent.CONFERENCE_DESCRIPTION_RECEIVED)
+        {
+            updateChatConferences(evt.getChatRoom(), evt.getMember(),cd);
+            
+            
+            if(cd.isAvailable() && evt.getActiveConferencesCount() == 1)
+            {
+                sessionRenderer.setConferencesPanelVisible(true);
+            }
+            else if(!cd.isAvailable() && evt.getActiveConferencesCount() == 0)
+            {
+                sessionRenderer.setConferencesPanelVisible(false);
+            }
+        }
+        
     }
     
     /**
-     * Adds the announced conference to the interface.
+     * Adds/Removes the announced conference to the interface.
      * 
      * @param chatRoom the chat room where the conference is announced.
      * @param chatRoomMember the chat room member who announced the conference.
      * @param cd the <tt>ConferenceDescription</tt> instance which represents 
      * the conference.
      */
-    public void addChatConference(final ChatRoom chatRoom, 
+    public void updateChatConferences(final ChatRoom chatRoom, 
         final ChatRoomMember chatRoomMember, final ConferenceDescription cd)
     {
         if(!SwingUtilities.isEventDispatchThread())
@@ -697,11 +717,13 @@ public class ConferenceChatSession
                 @Override
                 public void run()
                 {
-                    addChatConference(chatRoom, chatRoomMember, cd);
+                    updateChatConferences(chatRoom, chatRoomMember, cd);
                 }
             });
             return;
         }
+        
+        boolean isAvailable = cd.isAvailable();
         
         for (ChatContact<?> chatContact : chatParticipants)
         {
@@ -713,17 +735,13 @@ public class ConferenceChatSession
                  * TODO: i13ze the string, if we decide to keep it at all
                  */
                 sessionRenderer.updateChatContactStatus(
-                        chatContact, "published a conference " +
-                        cd);
-                
-                chatRoomMember.
-                        setConferenceDescription(cd);
-
+                        chatContact, (isAvailable ? "published" : "removed") + 
+                        " a conference " + cd);
                 break;
             }
         }
         
-        if(cd.isAvailable())
+        if(isAvailable)
         {
             sessionRenderer.addChatConferenceCall(cd);
         }

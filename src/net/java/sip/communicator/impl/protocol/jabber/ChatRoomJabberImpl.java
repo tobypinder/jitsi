@@ -159,13 +159,6 @@ public class ChatRoomJabberImpl
     private Presence lastPresenceSent = null;
 
     /**
-     * The list of all <tt>ConferenceDescription</tt> that were announced and 
-     * are not yet processed.
-     */
-    private Map<String, ConferenceDescription> cachedConferenceDescriptions
-        = new HashMap<String, ConferenceDescription>();
-
-    /**
      * Creates an instance of a chat room that has been.
      *
      * @param multiUserChat MultiUserChat
@@ -1496,34 +1489,6 @@ public class ChatRoomJabberImpl
     }
 
     /**
-     * Finds <tt>ConferenceDescription</tt> instance that was published by 
-     * specified member from the list of cached <tt>ConferenceDescription</tt> 
-     * instances.
-     * 
-     * @param memberName the name of the member.
-     * @return the <tt>ConferenceDescription</tt> instance
-     */
-    public synchronized ConferenceDescription findCachedConferenceDescription(
-        String memberName)
-    {
-        return cachedConferenceDescriptions.get(memberName);
-    }
-
-    /**
-     * Removes <tt>ConferenceDescription</tt> instance that was published by 
-     * specified member from the list of cached <tt>ConferenceDescription</tt> 
-     * instances.
-     * 
-     * @param memberName the name of the member.
-     * @return the <tt>ConferenceDescription</tt> instance that was removed.
-     */
-    public synchronized ConferenceDescription removeCachedConferenceDescription(
-        String memberName)
-    {
-        return cachedConferenceDescriptions.remove(memberName);
-    }
-
-    /**
      * Creates the corresponding ChatRoomMemberPresenceChangeEvent and notifies
      * all <tt>ChatRoomMemberPresenceListener</tt>s that a ChatRoomMember has
      * joined or left this <tt>ChatRoom</tt>.
@@ -1669,18 +1634,32 @@ public class ChatRoomJabberImpl
      * which contains a <tt>ConferenceDescriptionPacketExtension</tt>
      *
      * @param cd the description of the conference to announce
+     * @param name the name of the conference
      * @return the <tt>ConferenceDescription</tt> that was announced (e.g.
      * <tt>cd</tt> on success or <tt>null</tt> on failure)
      */
-    public ConferenceDescription publishConference(ConferenceDescription cd)
+    public ConferenceDescription publishConference(ConferenceDescription cd, 
+        String name)
     {
         if (publishedConference != null)
         {
             cd = publishedConference;
             cd.setAvailable(false);
         }
-        
-        cd.setDisplayName(nickname);
+        else
+        {
+            String displayName;
+            if(name == null)
+            {
+                displayName = nickname + JabberActivator.getResources()
+                    .getI18NString("service.gui.CHAT_CONFERENCE_ITEM_LABEL");
+            }
+            else
+            {
+                displayName = name;
+            }
+            cd.setDisplayName(displayName);
+        }
         
         ConferenceDescriptionPacketExtension ext
                 = new ConferenceDescriptionPacketExtension(cd);
@@ -1697,7 +1676,7 @@ public class ChatRoomJabberImpl
             publishedConferenceExt = null;
             return null;
         }
-
+       
         /*
          * Save the extensions to set to other outgoing Presence packets
          */
@@ -1709,7 +1688,9 @@ public class ChatRoomJabberImpl
                 = (publishedConference == null)
                 ? null
                 : ext;
-
+        
+        fireConferencePublishedEvent(members.get(nickname), cd, 
+            ChatRoomConferencePublishedEvent.CONFERENCE_DESCRIPTION_SENT);
         return cd;
     }
 
@@ -2690,16 +2671,25 @@ public class ChatRoomJabberImpl
                     participantName = StringUtils.parseResource(from);
                 }
                 ChatRoomMember member = members.get(participantName);
-
-                cachedConferenceDescriptions.put(participantName, cd);
+                
+                if(cd.isAvailable())
+                {
+                    cachedConferenceDescriptions.put(participantName, cd);
+                }
+                else
+                {
+                    removeCachedConferenceDescription(participantName);
+                }
+                
                 if (member != null)
                 {
                     if (logger.isDebugEnabled())
                         logger.debug("Received " + cd + " from " +
                                 participantName + "in " +
                                 multiUserChat.getRoom());
-
-                    fireConferencePublishedEvent(member, cd);
+                    fireConferencePublishedEvent(member, cd, 
+                        ChatRoomConferencePublishedEvent
+                            .CONFERENCE_DESCRIPTION_RECEIVED);
                 }
                 else
                 {

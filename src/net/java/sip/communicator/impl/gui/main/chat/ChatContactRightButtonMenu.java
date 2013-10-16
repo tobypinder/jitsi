@@ -87,10 +87,6 @@ public class ChatContactRightButtonMenu
         = new JMenuItem(GuiActivator.getResources().getI18NString(
             "service.gui.REVOKE_VOICE"));
 
-    private final JMenuItem joinConferenceItem
-            = new JMenuItem(GuiActivator.getResources().getI18NString(
-            "service.gui.JOIN_CONFERENCE"));
-
     private final ChatPanel chatPanel;
 
     /**
@@ -187,7 +183,6 @@ public class ChatContactRightButtonMenu
         this.revokeModeratorItem.addActionListener(this);
         this.revokeOwnershipItem.addActionListener(this);
         this.revokeVoiceItem.addActionListener(this);
-        this.joinConferenceItem.addActionListener(this);
 
         this.kickItem.setName("kickItem");
         this.banItem.setName("banItem");
@@ -203,14 +198,6 @@ public class ChatContactRightButtonMenu
         this.revokeModeratorItem.setName("revokeModeratorItem");
         this.revokeOwnershipItem.setName("revokeOwnershipItem");
         this.revokeVoiceItem.setName("revokeVoiceItem");
-        this.joinConferenceItem.setName("joinConferenceItem");
-
-        Object o = chatContact.getDescriptor();
-        if (o instanceof ChatRoomMember
-                && ((ChatRoomMember)o).getConferenceDescription() != null)
-        {
-            this.add(joinConferenceItem);
-        }
 
         loadSkin();
 
@@ -475,23 +462,6 @@ public class ChatContactRightButtonMenu
             ((ChatRoomMember)chatContact.getDescriptor()).setRole(
                 ChatRoomMemberRole.SILENT_MEMBER);
         }
-        else if(menuItemName.equals("joinConferenceItem"))
-        {
-            ConferenceDescription cd =
-                    ((ChatRoomMember)chatContact.getDescriptor())
-                            .getConferenceDescription();
-
-            if (cd != null
-                    && cd.isAvailable())
-            {
-                CallManager.call(room.getParentProvider(), cd);
-            }
-            else
-            {
-                logger.warn("Cannot join a conference, description is null or" +
-                        "unavailable.");
-            }
-        }
     }
 
     /**
@@ -647,8 +617,6 @@ public class ChatContactRightButtonMenu
             ImageLoader.getImage(ImageLoader.CHATROOM_MEMBER_ADMIN), 16, 16));
         this.revokeVoiceItem.setIcon(ImageUtils.getScaledRoundedIcon(
             ImageLoader.getImage(ImageLoader.CHAT_ROOM_REVOKE_VOICE), 16, 16));
-        this.joinConferenceItem.setIcon(ImageUtils.getScaledRoundedIcon(
-            ImageLoader.getImage(ImageLoader.CONFERENCE_ICON), 16, 16));
         this.kickItem.setIcon(new ImageIcon(ImageLoader.getImage(
             ImageLoader.KICK_ICON_16x16)));
         this.banItem.setIcon(new ImageIcon(ImageLoader.getImage(

@@ -272,7 +272,7 @@ public abstract class ChatSession
      * @param cd the <tt>ConferenceDescription</tt> instance which represents 
      * the conference.
      */
-    public abstract void addChatConference(
+    public abstract void updateChatConferences(
         final ChatRoom chatRoom, 
         final ChatRoomMember member,
         final ConferenceDescription cd);

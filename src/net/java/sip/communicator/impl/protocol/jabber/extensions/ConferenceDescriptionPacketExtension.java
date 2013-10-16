@@ -9,6 +9,7 @@ package net.java.sip.communicator.impl.protocol.jabber.extensions;
 import net.java.sip.communicator.service.protocol.*;
 import org.jivesoftware.smack.packet.*;
 import org.jivesoftware.smack.provider.*;
+import org.jivesoftware.smack.util.*;
 import org.xmlpull.v1.*;
 
 import java.util.*;
@@ -169,7 +170,7 @@ public class ConferenceDescriptionPacketExtension
      */
     public void setUri(String uri)
     {
-        setAttribute(URI_ATTR_NAME, uri);
+        setAttribute(URI_ATTR_NAME, StringUtils.escapeForXML(uri));
     }
 
     /**
@@ -205,7 +206,7 @@ public class ConferenceDescriptionPacketExtension
      */
     public void setName(String name)
     {
-       setAttribute(CONFERENCE_NAME_ATTR_NAME, name);
+       setAttribute(CONFERENCE_NAME_ATTR_NAME, StringUtils.escapeForXML(name));
     }
 
     /**

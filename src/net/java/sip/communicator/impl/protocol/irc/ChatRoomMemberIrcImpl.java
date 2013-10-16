@@ -151,23 +151,4 @@ public class ChatRoomMemberIrcImpl
      {
          return null;
      }
-
-    /**
-     * {@inheritDoc}
-     * @return <tt>null</tt>
-     */
-    @Override
-    public ConferenceDescription getConferenceDescription()
-    {
-        return null;
-    }
-
-    /**
-     * {@inheritDoc}
-     * Stub implementation.
-     */
-    public void setConferenceDescription(ConferenceDescription cd)
-    {
-        return;
-    }
 }

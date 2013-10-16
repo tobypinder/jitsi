@@ -760,7 +760,8 @@ public class MockChatRoom
      *
      * Not implemented.
      */
-    public ConferenceDescription publishConference(ConferenceDescription cd)
+    public ConferenceDescription publishConference(ConferenceDescription cd,
+        String name)
     {
         return null;
     }

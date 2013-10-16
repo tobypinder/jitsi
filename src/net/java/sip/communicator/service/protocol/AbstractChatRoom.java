@@ -27,6 +27,13 @@ public abstract class AbstractChatRoom
                 = new LinkedList<ChatRoomConferencePublishedListener>();
 
     /**
+     * The list of all <tt>ConferenceDescription</tt> that were announced and 
+     * are not yet processed.
+     */
+    protected Map<String, ConferenceDescription> cachedConferenceDescriptions
+        = new HashMap<String, ConferenceDescription>();
+    
+    /**
      * {@inheritDoc}
      */
     public void addConferencePublishedListener(
@@ -49,6 +56,35 @@ public abstract class AbstractChatRoom
             conferencePublishedListeners.remove(listener);
         }
     }
+    
+    /**
+     * Removes <tt>ConferenceDescription</tt> instance that was published by 
+     * specified member from the list of cached <tt>ConferenceDescription</tt> 
+     * instances.
+     * 
+     * @param memberName the name of the member.
+     * @return the <tt>ConferenceDescription</tt> instance that was removed.
+     */
+    public synchronized ConferenceDescription removeCachedConferenceDescription(
+        String memberName)
+    {
+        return cachedConferenceDescriptions.remove(memberName);
+    }
+
+    /**
+     * Finds <tt>ConferenceDescription</tt> instance that was published by 
+     * specified member from the list of cached <tt>ConferenceDescription</tt> 
+     * instances.
+     * 
+     * @param memberName the name of the member.
+     * @return the <tt>ConferenceDescription</tt> instance
+     */
+    public synchronized ConferenceDescription findCachedConferenceDescription(
+        String memberName)
+    {
+        return cachedConferenceDescriptions.get(memberName);
+    }
+
 
     /**
      * Creates the corresponding <tt>ChatRoomConferencePublishedEvent</tt> and
@@ -57,13 +93,16 @@ public abstract class AbstractChatRoom
      *
      * @param member the <tt>ChatRoomMember</tt> that published <tt>cd</tt>.
      * @param cd the <tt>ConferenceDescription</tt> that was published.
+     * @param eventType the type of the event.
      */
     protected void fireConferencePublishedEvent(
             ChatRoomMember member,
-            ConferenceDescription cd)
+            ConferenceDescription cd,
+            int eventType)
     {
         ChatRoomConferencePublishedEvent evt
-                = new ChatRoomConferencePublishedEvent(this, member, cd);
+                = new ChatRoomConferencePublishedEvent(eventType, this, member, 
+                    cd, cachedConferenceDescriptions.size());
 
         List<ChatRoomConferencePublishedListener> listeners;
         synchronized (conferencePublishedListeners)

@@ -134,24 +134,4 @@ public class MockChatRoomMember
     {
         return contact;
     }
-
-    /**
-     * {@inheritDoc}
-     * Stub implementation.
-     */
-    @Override
-    public ConferenceDescription getConferenceDescription()
-    {
-        return null;
-    }
-
-    /**
-     * {@inheritDoc}
-     * Stub implementation.
-     */
-    @Override
-    public void setConferenceDescription(ConferenceDescription cd)
-    {
-        return;
-    }
 }

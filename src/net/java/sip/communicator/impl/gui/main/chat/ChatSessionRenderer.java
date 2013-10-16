@@ -120,4 +120,21 @@ public interface ChatSessionRenderer
      */
     public void removeChatConferenceCall(
         ConferenceDescription conferenceDescription);
+    
+    /**
+     * Sets the visibility of conferences panel to <tt>true</tt> or 
+     * <tt>false</tt>
+     * 
+     * @param isVisible if <tt>true</tt> the panel is visible.
+     */
+    public void setConferencesPanelVisible(boolean isVisible);
+    
+    /**
+     * This method is called when the local user creates a conference.
+     * 
+     * @param conferenceDescription the <tt>ConferenceDescription</tt> instance 
+     * associated with the conference.
+     */
+    public void chatConferenceCreated(
+        ConferenceDescription conferenceDescription);
 }

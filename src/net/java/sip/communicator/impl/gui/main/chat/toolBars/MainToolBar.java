@@ -254,16 +254,16 @@ public class MainToolBar
         this.leaveChatRoomButton.setToolTipText(
             GuiActivator.getResources().getI18NString("service.gui.LEAVE"));
 
-        this.callButton.setName("call");
         this.callButton.setToolTipText(
             GuiActivator.getResources().getI18NString(
                 "service.gui.CALL_CONTACT"));
 
-        this.callVideoButton.setName("callVideo");
         this.callVideoButton.setToolTipText(
             GuiActivator.getResources().getI18NString(
                 "service.gui.CALL_CONTACT"));
 
+        setCallButtonsName();
+        
         this.desktopSharingButton.setName("desktop");
         this.desktopSharingButton.setToolTipText(
             GuiActivator.getResources().getI18NString(
@@ -367,6 +367,8 @@ public class MainToolBar
                 new UpdateCallButtonWorker(contact).start();
 
             changeHistoryButtonsState(chatPanel);
+            
+            setCallButtonsName();
         }
     }
 
@@ -508,31 +510,7 @@ public class MainToolBar
             chatPanel.showFontChooserDialog();
         else if (buttonText.equals("createConference"))
         {
-            Object o = chatSession.getDescriptor();
-            ChatRoom chatRoom = null;
-            if (o instanceof ChatRoomWrapper)
-                chatRoom = ((ChatRoomWrapper)o).getChatRoom();
-
-            if (chatRoom == null)
-            {
-                // TODO: show an error
-                return;
-            }
-
-            OperationSetTelephonyConferencing telephonyConferencing
-                    = chatRoom.getParentProvider().getOperationSet(
-                        OperationSetTelephonyConferencing.class);
-
-            ConferenceDescription cd = null;
-            if (telephonyConferencing != null)
-            {
-                cd = telephonyConferencing.setupConference(chatRoom);
-            }
-
-            if (cd != null)
-            {
-                chatRoom.publishConference(cd);
-            }
+            chatPanel.showChatConferenceDialog();
         }
     }
 
@@ -741,6 +719,22 @@ public class MainToolBar
     }
 
     /**
+     * Sets the names of the call buttons depending on the chat session type.
+     */
+    public void setCallButtonsName()
+    {
+        if(chatSession instanceof ConferenceChatSession)
+        {
+            callButton.setName("createConference");
+            callVideoButton.setName("createConference");
+        }
+        else
+        {
+            callButton.setName("call");
+            callVideoButton.setName("callVideo");
+        }
+    }
+    /**
      * Searches for phone numbers in <tt>MetaContact/tt> operation sets.
      * And changes the call button enable/disable state.
      */
@@ -805,7 +799,6 @@ public class MainToolBar
             callButton.setEnabled(isCallEnabled);
             callVideoButton.setEnabled(isVideoCallEnabled);
             desktopSharingButton.setEnabled(isDesktopSharingEnabled);
-
         }
 
     }

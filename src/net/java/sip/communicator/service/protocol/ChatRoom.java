@@ -538,9 +538,11 @@ public interface ChatRoom
      * Publishes a <tt>ConferenceDescription</tt> to the chat room.
      *
      * @param cd the description to publish
+     * @param name the name of the conference
      * @return the published conference
      */
-    public ConferenceDescription publishConference(ConferenceDescription cd);
+    public ConferenceDescription publishConference(ConferenceDescription cd,
+        String name);
 
     /**
      * Adds a listener that will be notified when a member of this chat room

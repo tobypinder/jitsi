@@ -240,21 +240,4 @@ public class ChatRoomMemberJabberImpl
      {
          this.contact = contact;
      }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public ConferenceDescription getConferenceDescription()
-    {
-        return conferenceDescription;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public void setConferenceDescription(ConferenceDescription cd)
-    {
-        conferenceDescription = cd;
-    }
 }

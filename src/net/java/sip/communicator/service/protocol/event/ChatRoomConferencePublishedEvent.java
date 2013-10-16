@@ -34,6 +34,28 @@ public class ChatRoomConferencePublishedEvent
      * The <tt>ConferenceDescription</tt> that was published.
      */
     private final ConferenceDescription conferenceDescription;
+    
+    /**
+     * The number of announced conference.
+     */
+    private final int activeConferencesCount;
+    
+    /**
+     * The type of the event. It can be <tt>CONFERENCE_DESCRIPTION_SENT</tt> or 
+     * <tt>CONFERENCE_DESCRIPTION_RECEIVED</tt>.
+     */
+    private final int eventType;
+    
+    /**
+     * Event type that indicates sending of conference description by the local 
+     * user.
+     */
+    public final static int CONFERENCE_DESCRIPTION_SENT = 0;
+    
+    /**
+     * Event type that indicates receiving conference description.
+     */
+    public final static int CONFERENCE_DESCRIPTION_RECEIVED = 1;
 
     /**
      * Creates a new instance.
@@ -42,17 +64,22 @@ public class ChatRoomConferencePublishedEvent
      * <tt>ConferenceDescription</tt>
      * @param conferenceDescription The <tt>ConferenceDescription</tt> that was
      * published.
+     * @param activeConferencesCount the number of announced conference.
      */
     public ChatRoomConferencePublishedEvent(
+            int eventType,
             ChatRoom chatRoom,
             ChatRoomMember member,
-            ConferenceDescription conferenceDescription)
+            ConferenceDescription conferenceDescription,
+            int activeConferencesCount)
     {
         super(chatRoom);
-
+        
+        this.eventType = eventType;
         this.chatRoom = chatRoom;
         this.member = member;
         this.conferenceDescription = conferenceDescription;
+        this.activeConferencesCount = activeConferencesCount;
     }
 
     /**
@@ -82,5 +109,23 @@ public class ChatRoomConferencePublishedEvent
     public ConferenceDescription getConferenceDescription()
     {
         return conferenceDescription;
+    }
+    
+    /**
+     * Returns the number of announced conferences.
+     * @return the number of announced conferences.
+     */
+    public int getActiveConferencesCount()
+    {
+        return activeConferencesCount;
+    }
+    
+    /**
+     * Returns the event type.
+     * @return the event type.
+     */
+    public int getType()
+    {
+        return eventType;
     }
 }

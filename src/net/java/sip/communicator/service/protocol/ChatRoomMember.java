@@ -89,19 +89,4 @@ public interface ChatRoomMember
      * to set for this member in its containing chat room.
      */
     public void setRole(ChatRoomMemberRole role);
-
-    /**
-     * Gets the <tt>ConferenceDescription</tt> published by this
-     * <tt>ChatRoomMember</tt>
-     * @return the <tt>ConferenceDescription</tt> published by this
-     * <tt>ChatRoomMember</tt>
-     */
-    public ConferenceDescription getConferenceDescription();
-
-    /**
-     * Sets the <tt>ConferenceDescription</tt> published by this
-     * <tt>ChatRoomMember</tt>
-     * @param cd the <tt>ConferenceDescription</tt> to set.
-     */
-    public void setConferenceDescription(ConferenceDescription cd);
 }

@@ -1,48 +1,33 @@
+/*
+ * Jitsi, the OpenSource Java VoIP and Instant Messaging client.
+ *
+ * Distributable under LGPL license.
+ * See terms of license at gnu.org.
+ */
 package net.java.sip.communicator.impl.gui.main.chat.conference;
 
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Component;
-import java.awt.Dimension;
-import java.awt.Font;
-import java.awt.GradientPaint;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.GridLayout;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.lang.annotation.Inherited;
+import java.awt.*;
+import java.awt.event.*;
 
-import javax.swing.BorderFactory;
-import javax.swing.DefaultListCellRenderer;
-import javax.swing.ImageIcon;
-import javax.swing.JLabel;
-import javax.swing.JList;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JViewport;
-import javax.swing.ListCellRenderer;
+import javax.swing.*;
 
-import net.java.sip.communicator.impl.gui.GuiActivator;
-import net.java.sip.communicator.impl.gui.main.call.CallManager;
-import net.java.sip.communicator.impl.gui.main.chat.ChatContact;
-import net.java.sip.communicator.impl.gui.main.chat.ChatContactRightButtonMenu;
-import net.java.sip.communicator.impl.gui.main.chat.ChatPanel;
-import net.java.sip.communicator.impl.gui.main.contactlist.CListKeySearchListener;
-import net.java.sip.communicator.impl.gui.main.contactlist.DefaultContactList;
-import net.java.sip.communicator.impl.gui.utils.Constants;
-import net.java.sip.communicator.impl.gui.utils.ImageLoader;
-import net.java.sip.communicator.plugin.desktoputil.AntialiasingManager;
-import net.java.sip.communicator.plugin.desktoputil.SIPCommScrollPane;
-import net.java.sip.communicator.plugin.desktoputil.TransparentPanel;
-import net.java.sip.communicator.service.protocol.ConferenceDescription;
-import net.java.sip.communicator.service.protocol.OperationSetMultiUserChat;
-import net.java.sip.communicator.util.Logger;
-import net.java.sip.communicator.util.skin.Skinnable;
+import net.java.sip.communicator.impl.gui.*;
+import net.java.sip.communicator.impl.gui.main.call.*;
+import net.java.sip.communicator.impl.gui.main.chat.*;
+import net.java.sip.communicator.impl.gui.main.contactlist.*;
+import net.java.sip.communicator.impl.gui.utils.*;
+import net.java.sip.communicator.plugin.desktoputil.*;
+import net.java.sip.communicator.service.protocol.*;
+import net.java.sip.communicator.util.skin.*;
 
+/**
+ * Implements a list with announced conferences in chat room.
+ * 
+ * @author Hristo Terezov
+ */
 public class ChatRoomConferenceCallsListPanel
-extends JPanel
-implements Skinnable
+    extends JPanel
+    implements Skinnable
 {
     private static final long serialVersionUID = -8250816784228586068L;
 
@@ -118,9 +103,7 @@ implements Skinnable
             
             setFont(this.getFont().deriveFont(Font.PLAIN));
             conferenceLabel.setText(
-                ((ConferenceDescription)value).getDisplayName() + 
-                GuiActivator.getResources()
-                .getI18NString("service.gui.CHAT_CONFERENCE_ITEM_LABEL"));
+                ((ConferenceDescription)value).getDisplayName());
             return this;
         }
         
@@ -201,7 +184,6 @@ implements Skinnable
             new CListKeySearchListener(conferenceCallList));
         this.conferenceCallList.setCellRenderer(
             new ChatConferenceCallsListRenderer());
-
         if(this.chatPanel.getChatSession().getCurrentChatTransport()
                 .getProtocolProvider().getSupportedOperationSets().containsKey(
                     OperationSetMultiUserChat.class.getName()))
@@ -242,14 +224,7 @@ implements Skinnable
         viewport.add(conferenceCallList);
 
         this.add(conferenceCallsScrollPane);
-    }
-    
-    /**
-     * Initializes the list of the conferences that are already announced.
-     */
-    public void initConferences()
-    {
-        conferenceCallsListModel.initConferences();
+        
     }
 
     /**
@@ -262,16 +237,35 @@ implements Skinnable
     {
         conferenceCallsListModel.addElement(chatConference);
     }
-
+    
     /**
-     * Removes the given <tt>ConferenceDescription</tt> from the list of chat 
-     * conferences.
-     *
-     * @param chatConference the <tt>ConferenceDescription</tt> to remove
+     * Returns the size of the list.
+     * 
+     * @return the number of elements in the list.
      */
-    public void removeConference(ConferenceDescription chatConference)
+    public int getListSize()
     {
-        conferenceCallsListModel.removeElement(chatConference);
+        return conferenceCallsListModel.getSize();
+    }
+    
+    /**
+     * Returns the <tt>ConferenceDescription</tt> of the selected conference in 
+     * the list.
+     * 
+     * @return the <tt>ConferenceDescription</tt> of the selected conference
+     */
+    public ConferenceDescription getSelectedValue()
+    {
+        return (ConferenceDescription) conferenceCallList.getSelectedValue();
+    }
+    
+    /**
+     * Initializes the list of the conferences that are already announced.
+     */
+    public void initConferences()
+    {
+        conferenceCallsListModel.initConferences();
+        conferenceCallList.setSelectedIndex(0);
     }
 
     /**
@@ -285,5 +279,15 @@ implements Skinnable
             .loadSkin();
         
     }
-
+    
+    /**
+     * Removes the given <tt>ConferenceDescription</tt> from the list of chat 
+     * conferences.
+     *
+     * @param chatConference the <tt>ConferenceDescription</tt> to remove
+     */
+    public void removeConference(ConferenceDescription chatConference)
+    {
+        conferenceCallsListModel.removeElement(chatConference);
+    }
 }

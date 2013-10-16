@@ -11,19 +11,13 @@ import java.util.*;
 import javax.swing.*;
 
 import net.java.sip.communicator.impl.gui.main.chat.*;
-import net.java.sip.communicator.service.protocol.ChatRoom;
-import net.java.sip.communicator.service.protocol.ChatRoomMember;
-import net.java.sip.communicator.service.protocol.ConferenceDescription;
-import net.java.sip.communicator.service.protocol.event.*;
-import net.java.sip.communicator.util.Logger;
+import net.java.sip.communicator.service.protocol.*;
 
 /**
  * Implements an <tt>AbstractListModel</tt> which represents a member list of
- * <tt>ChatContact</tt>s. The primary purpose of the implementation is to sort
- * the <tt>ChatContact</tt>s according to their member roles and in alphabetical
- * order according to their names.
+ * <tt>ConferenceDescription</tt>s. 
  *
- * @author Lyubomir Marinov
+ * @author Hristo Terezov
  */
 public class ChatConferenceCallsListModels
     extends AbstractListModel<ConferenceDescription>
@@ -60,13 +54,12 @@ public class ChatConferenceCallsListModels
             ChatRoom chatRoom = ((ChatRoomWrapper)descriptor).getChatRoom();
             for(ChatRoomMember member : chatRoom.getMembers())
             {
-                if(chatRoom.findCachedConferenceDescription(
-                    member.getName()) != null)
+                ConferenceDescription cd 
+                    = chatRoom.findCachedConferenceDescription(
+                        member.getName());
+                if(cd != null)
                 {
-                    ConferenceDescription cd
-                        = chatRoom.removeCachedConferenceDescription(
-                            member.getName());
-                    chatSession.addChatConference(chatRoom, member, cd);
+                    chatSession.updateChatConferences(chatRoom, member, cd);
                 }
             }
         }
@@ -82,7 +75,7 @@ public class ChatConferenceCallsListModels
     public void addElement(ConferenceDescription chatConference)
     {
         if (chatConference == null)
-            throw new IllegalArgumentException("chatContact");
+            throw new IllegalArgumentException("ConferenceDescription");
         
         int index = -1;
 
@@ -92,11 +85,9 @@ public class ChatConferenceCallsListModels
 
             if(chatConferenceCalls.contains(chatConference))
                 return;
-            
             index = chatContactCount;
             chatConferenceCalls.add(index, chatConference);
         }
-        
         fireIntervalAdded(this, index, index);
     }
 
