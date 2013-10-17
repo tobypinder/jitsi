@@ -2672,14 +2672,8 @@ public class ChatRoomJabberImpl
                 }
                 ChatRoomMember member = members.get(participantName);
                 
-                if(cd.isAvailable())
-                {
-                    cachedConferenceDescriptions.put(participantName, cd);
-                }
-                else
-                {
-                    removeCachedConferenceDescription(participantName);
-                }
+                if(!processConferenceDescription(cd, participantName))
+                    return;
                 
                 if (member != null)
                 {
@@ -2697,9 +2691,9 @@ public class ChatRoomJabberImpl
                             "unknown member ("+participantName+") in " +
                             multiUserChat.getRoom());
                 }
+                
             }
         }
-
     }
 
     /**

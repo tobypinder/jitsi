@@ -248,20 +248,22 @@ public class ConferenceDescription
         return "ConferenceDescription(uri="+uri+"; callid="+callId+")";
     }
     
+    
     /**
-     * {@inheritDoc}
+     * Checks if two <tt>ConferenceDescription</tt> instances have the same 
+     * call id, URI and supported transports.
+     * 
+     * @param cd1 the first <tt>ConferenceDescription</tt> instance.
+     * @param cd2 the second <tt>ConferenceDescription</tt> instance.
+     * @return <tt>true</tt> if the <tt>ConferenceDescription</tt> instances 
+     * have the same call id, URI and supported transports. Otherwise 
+     * <tt>false</tt> is returned.
      */
-    @Override
-    public boolean equals(Object obj)
+    public boolean compareConferenceDescription(ConferenceDescription cd)
     {
-        if (this == obj)
-            return true;
-
-        if (!getClass().isInstance(obj))
-            return false;
-
-        ConferenceDescription cd = (ConferenceDescription) obj;
-
-        return getCallId().equals(cd.callId);
+        return (getCallId().equals(cd.getCallId())
+            && getUri().equals(cd.getUri())
+            && getSupportedTransports().equals(
+                cd.getSupportedTransports()));
     }
 }

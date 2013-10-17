@@ -672,6 +672,19 @@ public class ConferenceChatSession
      */
     public void conferencePublished(final ChatRoomConferencePublishedEvent evt)
     {
+        if(!SwingUtilities.isEventDispatchThread())
+        {
+            SwingUtilities.invokeLater(new Runnable()
+            {
+                @Override
+                public void run()
+                {
+                    conferencePublished(evt);
+                }
+            });
+            return;
+        }
+        
         if(!evt.getChatRoom().equals(chatRoomWrapper.getChatRoom()))
             return;
         
@@ -684,17 +697,9 @@ public class ConferenceChatSession
         else if(evt.getType() 
             == ChatRoomConferencePublishedEvent.CONFERENCE_DESCRIPTION_RECEIVED)
         {
-            updateChatConferences(evt.getChatRoom(), evt.getMember(),cd);
+            updateChatConferences(evt.getChatRoom(), evt.getMember(), cd , 
+                evt.getActiveConferencesCount());
             
-            
-            if(cd.isAvailable() && evt.getActiveConferencesCount() == 1)
-            {
-                sessionRenderer.setConferencesPanelVisible(true);
-            }
-            else if(!cd.isAvailable() && evt.getActiveConferencesCount() == 0)
-            {
-                sessionRenderer.setConferencesPanelVisible(false);
-            }
         }
         
     }
@@ -707,22 +712,11 @@ public class ConferenceChatSession
      * @param cd the <tt>ConferenceDescription</tt> instance which represents 
      * the conference.
      */
-    public void updateChatConferences(final ChatRoom chatRoom, 
-        final ChatRoomMember chatRoomMember, final ConferenceDescription cd)
+    private void updateChatConferences(ChatRoom chatRoom, 
+        ChatRoomMember chatRoomMember, 
+        ConferenceDescription cd, 
+        int activeConferencesCount)
     {
-        if(!SwingUtilities.isEventDispatchThread())
-        {
-            SwingUtilities.invokeLater(new Runnable()
-            {
-                @Override
-                public void run()
-                {
-                    updateChatConferences(chatRoom, chatRoomMember, cd);
-                }
-            });
-            return;
-        }
-        
         boolean isAvailable = cd.isAvailable();
         
         for (ChatContact<?> chatContact : chatParticipants)
@@ -744,10 +738,14 @@ public class ConferenceChatSession
         if(isAvailable)
         {
             sessionRenderer.addChatConferenceCall(cd);
+            if(activeConferencesCount == 1)
+                sessionRenderer.setConferencesPanelVisible(true);
         }
         else
         {
             sessionRenderer.removeChatConferenceCall(cd);
+            if(activeConferencesCount == 0)
+                sessionRenderer.setConferencesPanelVisible(false);
         }
     }
 }

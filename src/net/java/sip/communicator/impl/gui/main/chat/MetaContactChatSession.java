@@ -887,15 +887,4 @@ public class MetaContactChatSession
         }
         return null;
     }
-
-    /**
-     * {@inheritDoc}
-     *
-     * Not implemented.
-     */
-    @Override
-    public void updateChatConferences(ChatRoom chatRoom, ChatRoomMember member,
-        ConferenceDescription cd)
-    {
-    }
 }

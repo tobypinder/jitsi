@@ -59,7 +59,14 @@ public class ChatConferenceCallsListModels
                         member.getName());
                 if(cd != null)
                 {
-                    chatSession.updateChatConferences(chatRoom, member, cd);
+                    if(cd.isAvailable())
+                    {
+                       addElement(cd);
+                    }
+                    else
+                    {
+                       removeElement(cd);
+                    }
                 }
             }
         }
@@ -83,7 +90,7 @@ public class ChatConferenceCallsListModels
         {
             int chatContactCount = chatConferenceCalls.size();
 
-            if(chatConferenceCalls.contains(chatConference))
+            if(findConferenceDescription(chatConference) != -1)
                 return;
             index = chatContactCount;
             chatConferenceCalls.add(index, chatConference);
@@ -130,10 +137,37 @@ public class ChatConferenceCallsListModels
     {
         synchronized(chatConferenceCalls)
         {
-            int index = chatConferenceCalls.indexOf(chatConference);
+            int index = findConferenceDescription(chatConference);
 
-            if ((index >= 0) && chatConferenceCalls.remove(chatConference))
+            if (index >= 0)
+            {
+                chatConferenceCalls.remove(index);
                 fireIntervalRemoved(this, index, index);
+            }
+                
         }
+    }
+    
+    /**
+     * Finds <tt>ConferenceDescription</tt> instance from the list of 
+     * conferences that matches specific <tt>ConferenceDescription</tt> 
+     * instance.
+     * 
+     * @param cd the <tt>ConferenceDescription</tt> instance we are searching 
+     * for.
+     * @return the index of the <tt>ConferenceDescription</tt> instance in the
+     * list of conferences that has the same call id, URI and supported 
+     * transports.
+     */
+    private int findConferenceDescription(ConferenceDescription cd)
+    {
+        for(int i = 0; i < chatConferenceCalls.size(); i++)
+        {
+            if(cd.compareConferenceDescription(chatConferenceCalls.get(i)))
+            {
+                return i;
+            }
+        }
+        return -1;
     }
 }

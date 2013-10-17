@@ -7,6 +7,8 @@
 package net.java.sip.communicator.service.protocol;
 
 import net.java.sip.communicator.service.protocol.event.*;
+import net.java.sip.communicator.util.*;
+
 import java.util.*;
 
 /**
@@ -18,6 +20,12 @@ import java.util.*;
 public abstract class AbstractChatRoom
     implements ChatRoom
 {
+    /**
+     * The logger of this class.
+     */
+    private static final Logger logger
+        = Logger.getLogger(AbstractChatRoom.class);
+    
     /**
      * The list of listeners to be notified when a member of the chat room
      * publishes a <tt>ConferenceDescription</tt>
@@ -113,5 +121,31 @@ public abstract class AbstractChatRoom
 
         for (ChatRoomConferencePublishedListener listener : listeners)
             listener.conferencePublished(evt);
+    }
+    
+    protected boolean processConferenceDescription(ConferenceDescription cd, 
+        String participantName)
+    {
+        if(cd.isAvailable())
+        {
+            if(cachedConferenceDescriptions.containsKey(participantName))
+                return false;
+            
+            cachedConferenceDescriptions.put(participantName, cd);
+        }
+        else
+        {
+            ConferenceDescription cachedDescription
+                = cachedConferenceDescriptions.get(participantName);
+            
+            if(cachedDescription == null
+                || !cd.compareConferenceDescription(cachedDescription))
+                return false;
+            
+            removeCachedConferenceDescription(participantName);
+        }
+        
+        return true;
+        
     }
 }

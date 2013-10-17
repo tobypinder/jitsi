@@ -517,15 +517,4 @@ public class AdHocConferenceChatSession
     public void removeChatTransportChangeListener(ChatSessionChangeListener l)
     {
     }
-
-    /**
-     * {@inheritDoc}
-     *
-     * Not implemented.
-     */
-    @Override
-    public void updateChatConferences(ChatRoom chatRoom, ChatRoomMember member,
-        ConferenceDescription cd)
-    {
-    }
 }

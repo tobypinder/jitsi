@@ -263,17 +263,4 @@ public abstract class ChatSession
      */
     public abstract void removeChatTransportChangeListener(
         ChatSessionChangeListener l);
-
-    /**
-     * Adds the announced conference to the interface.
-     * 
-     * @param chatRoom the chat room where the conference is announced.
-     * @param chatRoomMember the chat room member who announced the conference.
-     * @param cd the <tt>ConferenceDescription</tt> instance which represents 
-     * the conference.
-     */
-    public abstract void updateChatConferences(
-        final ChatRoom chatRoom, 
-        final ChatRoomMember member,
-        final ConferenceDescription cd);
 }
