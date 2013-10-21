@@ -3063,13 +3063,13 @@ public class ChatPanel
 
     /**
      * Changes the chat conference dialog layout. This method is called when the 
-     * local user creates a conference.
+     * local user publishes a <tt>ConferenceDescription</tt> instance.
      * 
      * @param conferenceDescription the <tt>ConferenceDescription</tt> instance 
      * associated with the conference.
      */
     @Override
-    public void chatConferenceCreated(
+    public void chatConferenceDescriptionSent(
         ConferenceDescription conferenceDescription)
     {
         boolean available = conferenceDescription.isAvailable();

@@ -757,6 +757,29 @@ public class ChatRoomJabberImpl
      */
     public void leave()
     {
+        if(this.publishedConference != null)
+        {
+            
+            String callid = publishedConference.getCallId();
+            
+            if (callid != null)
+            {
+                OperationSetBasicTelephonyJabberImpl basicTelephony
+                    = (OperationSetBasicTelephonyJabberImpl) provider
+                        .getOperationSet(OperationSetBasicTelephony.class);
+                CallJabberImpl call
+                    = basicTelephony.getActiveCallsRepository()
+                        .findCallId(callid);
+                for(CallPeerJabberImpl peer : call.getCallPeerList())
+                {
+                    peer.hangup(false, null, null);
+                }
+            }
+            
+            clearCachedConferenceDescriptionList();
+            
+        }
+        
         XMPPConnection connection = this.provider.getConnection();
         try
         {
@@ -783,8 +806,6 @@ public class ChatRoomJabberImpl
          // Delete the list of members
             members.clear();
         }
-        
-
         
 
         // connection can be null if we are leaving cause connection failed

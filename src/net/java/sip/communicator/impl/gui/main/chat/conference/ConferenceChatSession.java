@@ -484,13 +484,6 @@ public class ConferenceChatSession
 
                     sessionRenderer.removeChatContact(chatContact);
                     
-                    ConferenceDescription cd 
-                        = chatRoomWrapper.getChatRoom()
-                            .removeCachedConferenceDescription(
-                                    chatRoomMember.getName());
-                    if(cd != null)
-                        sessionRenderer.removeChatConferenceCall(cd);
-                    
                     break;
                 }
             }
@@ -692,7 +685,7 @@ public class ConferenceChatSession
         if(evt.getType() 
             == ChatRoomConferencePublishedEvent.CONFERENCE_DESCRIPTION_SENT)
         {
-            sessionRenderer.chatConferenceCreated(cd);
+            sessionRenderer.chatConferenceDescriptionSent(cd);
         }
         else if(evt.getType() 
             == ChatRoomConferencePublishedEvent.CONFERENCE_DESCRIPTION_RECEIVED)

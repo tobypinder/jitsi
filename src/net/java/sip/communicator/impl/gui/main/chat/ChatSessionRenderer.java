@@ -130,11 +130,12 @@ public interface ChatSessionRenderer
     public void setConferencesPanelVisible(boolean isVisible);
     
     /**
-     * This method is called when the local user creates a conference.
+     * This method is called when the local user publishes a 
+     * <tt>ConferenceDescription</tt> instance.
      * 
      * @param conferenceDescription the <tt>ConferenceDescription</tt> instance 
      * associated with the conference.
      */
-    public void chatConferenceCreated(
+    public void chatConferenceDescriptionSent(
         ConferenceDescription conferenceDescription);
 }

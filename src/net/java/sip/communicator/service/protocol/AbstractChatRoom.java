@@ -123,6 +123,15 @@ public abstract class AbstractChatRoom
             listener.conferencePublished(evt);
     }
     
+    /**
+     * Processes the <tt>ConferenceDescription</tt> instance and adds/removes 
+     * it to the list of conferences.
+     * 
+     * @param cd the <tt>ConferenceDescription</tt> instance to process.
+     * @param participantName the name of the participant that sent the 
+     * <tt>ConferenceDescription</tt>.
+     * @return <tt>true</tt> on success and <tt>false</tt> if fail.
+     */
     protected boolean processConferenceDescription(ConferenceDescription cd, 
         String participantName)
     {
@@ -147,5 +156,13 @@ public abstract class AbstractChatRoom
         
         return true;
         
+    }
+    
+    /**
+     * Clears the list with the chat room conferences.
+     */
+    protected void clearCachedConferenceDescriptionList()
+    {
+        cachedConferenceDescriptions.clear();
     }
 }

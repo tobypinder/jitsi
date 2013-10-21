@@ -503,7 +503,7 @@ public class OperationSetTelephonyConferencingJabberImpl
      *
      */
     @Override
-    public ConferenceDescription setupConference(ChatRoom chatRoom)
+    public ConferenceDescription setupConference(final ChatRoom chatRoom)
     {
         OperationSetVideoBridge videoBridge
                 = parentProvider.getOperationSet(OperationSetVideoBridge.class);
@@ -518,9 +518,35 @@ public class OperationSetTelephonyConferencingJabberImpl
         ConferenceDescription cd
                 = new ConferenceDescription(uri, call.getCallID());
 
+        call.addCallChangeListener(new CallChangeListener()
+        {
+            
+            @Override
+            public void callStateChanged(CallChangeEvent evt)
+            {
+                if(CallState.CALL_ENDED.equals(evt.getNewValue()))
+                {
+                    chatRoom.publishConference(null, null);
+                }
+                
+            }
+            
+            @Override
+            public void callPeerRemoved(CallPeerEvent evt)
+            {
+                
+            }
+            
+            @Override
+            public void callPeerAdded(CallPeerEvent evt)
+            {
+                
+            }
+        });
         if (isVideoBridge)
         {
             call.setConference(new MediaAwareCallConference(true));
+            
 
             //For videobridge we set the transports to RAW-UDP, otherwise
             //we leave them empty (meaning both RAW-UDP and ICE could be used)
