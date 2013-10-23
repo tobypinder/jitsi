@@ -198,11 +198,12 @@ public interface OperationSetBasicTelephony<T extends ProtocolProviderService>
      * <tt>cd</tt> will be created and added to the returned <tt>Call</tt>
      *
      * @param cd the conference to send an invite to
+     * @param chatRoom the chat room associated with the call.
      *
      * @return a newly created <tt>Call</tt>, to which a <tt>CallPeer</tt>
      * corresponding to <tt>cd</tt> has been added.
      */
-    public Call createCall(ConferenceDescription cd)
+    public Call createCall(ConferenceDescription cd, ChatRoom chatRoom)
         throws OperationFailedException;
 
     /**

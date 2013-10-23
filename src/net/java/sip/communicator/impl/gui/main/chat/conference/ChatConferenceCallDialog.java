@@ -369,7 +369,7 @@ public class ChatConferenceCallDialog
         if (chatConference != null)
             CallManager.call(chatPanel.getChatSession()
                 .getCurrentChatTransport()
-                    .getProtocolProvider(), chatConference);
+                    .getProtocolProvider(), chatConference, chatRoom);
     }
 
     /**

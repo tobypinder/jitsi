@@ -364,7 +364,7 @@ public class CallManager
                                     UIContactImpl uiContact)
     {
         new CreateCallThread(protocolProvider, null, null, uiContact,
-            contact, null, false /* audio-only */).start();
+            contact, null, null, false /* audio-only */).start();
     }
 
     /**
@@ -392,7 +392,7 @@ public class CallManager
                                         UIContactImpl uiContact)
     {
         new CreateCallThread(protocolProvider, null, null, uiContact,
-            contact, null, true /* video */).start();
+            contact, null, null, true /* video */).start();
     }
 
     /**
@@ -2060,6 +2060,11 @@ public class CallManager
         private final boolean video;
 
         /**
+         * The chat room associated with the call.
+         */
+        private final ChatRoom chatRoom;
+        
+        /**
          * Creates an instance of <tt>CreateCallThread</tt>.
          *
          * @param protocolProvider the protocol provider through which the call
@@ -2076,7 +2081,7 @@ public class CallManager
                 boolean video)
         {
             this(protocolProvider, contact, contactResource, null, null, null,
-                    video);
+                null, video);
         }
 
         /**
@@ -2092,7 +2097,7 @@ public class CallManager
                 String contact,
                 boolean video)
         {
-            this(protocolProvider, null, null, null, contact, null, video);
+            this(protocolProvider, null, null, null, contact, null, null, video);
         }
 
         /**
@@ -2103,13 +2108,15 @@ public class CallManager
          * to perform the establishment of the new <tt>Call</tt>.
          * @param conferenceDescription the description of the conference to
          * call.
+         * @param chatRoom the chat room associated with the call.
          */
         public CreateCallThread(
                 ProtocolProviderService protocolProvider,
-                ConferenceDescription conferenceDescription)
+                ConferenceDescription conferenceDescription,
+                ChatRoom chatRoom)
         {
             this(protocolProvider, null, null, null, null,
-                    conferenceDescription,
+                    conferenceDescription, chatRoom,
                     false /* video */);
         }
 
@@ -2132,6 +2139,7 @@ public class CallManager
          * @param video <tt>true</tt> if this instance is to create a new video
          * (as opposed to audio-only) <tt>Call</tt>
          * @param conferenceDescription the description of a conference to call
+         * @param chatRoom the chat room associated with the call.
          */
         public CreateCallThread(
                 ProtocolProviderService protocolProvider,
@@ -2140,6 +2148,7 @@ public class CallManager
                 UIContactImpl uiContact,
                 String stringContact,
                 ConferenceDescription conferenceDescription,
+                ChatRoom chatRoom,
                 boolean video)
         {
             this.protocolProvider = protocolProvider;
@@ -2149,6 +2158,7 @@ public class CallManager
             this.stringContact = stringContact;
             this.video = video;
             this.conferenceDescription = conferenceDescription;
+            this.chatRoom = chatRoom;
         }
 
         @Override
@@ -2217,7 +2227,8 @@ public class CallManager
                 if (conferenceDescription != null)
                 {
                     internalCall(  protocolProvider,
-                                   conferenceDescription);
+                                   conferenceDescription,
+                                   chatRoom);
                 }
                 else
                 {
@@ -2362,9 +2373,11 @@ public class CallManager
      * @param protocolProvider the <tt>ProtocolProviderService</tt> through
      * which to make the call
      * @param conferenceDescription the description of the conference to call
+     * @param chatRoom the chat room associated with the call.
      */
     private static void internalCall(ProtocolProviderService protocolProvider,
-                                     ConferenceDescription conferenceDescription)
+                                     ConferenceDescription conferenceDescription,
+                                     ChatRoom chatRoom)
             throws OperationFailedException
     {
         OperationSetBasicTelephony<?> telephony
@@ -2373,7 +2386,7 @@ public class CallManager
 
         if (telephony != null)
         {
-            telephony.createCall(conferenceDescription);
+            telephony.createCall(conferenceDescription, chatRoom);
         }
     }
 
@@ -3437,11 +3450,14 @@ public class CallManager
      * @param protocolProvider the protocol provider through which to create
      * the call
      * @param conferenceDescription the description of the conference to call
+     * @param chatRoom the chat room associated with the call.
      */
     public static void call(ProtocolProviderService protocolProvider,
-                            ConferenceDescription conferenceDescription)
+                            ConferenceDescription conferenceDescription,
+                            ChatRoom chatRoom)
     {
-        new CreateCallThread(protocolProvider, conferenceDescription).start();
+        new CreateCallThread(protocolProvider, conferenceDescription, chatRoom)
+            .start();
     }
 
     /**

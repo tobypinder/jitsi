@@ -184,34 +184,6 @@ public class ChatRoomConferenceCallsListPanel
             new CListKeySearchListener(conferenceCallList));
         this.conferenceCallList.setCellRenderer(
             new ChatConferenceCallsListRenderer());
-        if(this.chatPanel.getChatSession().getCurrentChatTransport()
-                .getProtocolProvider().getSupportedOperationSets().containsKey(
-                    OperationSetMultiUserChat.class.getName()))
-        {
-            this.conferenceCallList.addMouseListener(new MouseAdapter()
-            {
-                @Override
-                public void mouseClicked(MouseEvent e)
-                {
-                    if(e.getButton() == MouseEvent.BUTTON1 
-                        && e.getClickCount() == 2)
-                    {
-                        conferenceCallList.setSelectedIndex(
-                            conferenceCallList.locationToIndex(e.getPoint()));
-
-                        ConferenceDescription chatConference
-                            = (ConferenceDescription) conferenceCallList
-                                .getSelectedValue();
-
-                        if (chatConference != null)
-                            CallManager.call(chatPanel.getChatSession()
-                                .getCurrentChatTransport()
-                                    .getProtocolProvider(), chatConference);
-                    }
-                }
-            });
-        }
-
 
         JScrollPane conferenceCallsScrollPane = new SIPCommScrollPane();
         conferenceCallsScrollPane.setHorizontalScrollBarPolicy(

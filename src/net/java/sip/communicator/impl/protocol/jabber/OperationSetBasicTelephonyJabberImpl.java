@@ -182,10 +182,38 @@ public class OperationSetBasicTelephonyJabberImpl
      * Uses the supported transports of <tt>cd</tt>
      */
     @Override public CallJabberImpl
-        createCall(ConferenceDescription cd)
+        createCall(ConferenceDescription cd, final ChatRoom chatRoom)
         throws OperationFailedException
     {
-        CallJabberImpl call = new CallJabberImpl(this);
+        final CallJabberImpl call = new CallJabberImpl(this);
+        
+        ((ChatRoomJabberImpl) chatRoom).addConferenceCall(call);
+        
+        call.addCallChangeListener(new CallChangeListener()
+        {
+            
+            @Override
+            public void callStateChanged(CallChangeEvent evt)
+            {
+                if(CallState.CALL_ENDED.equals(evt.getNewValue()))
+                {
+                    ((ChatRoomJabberImpl) chatRoom).removeConferenceCall(call);
+                }
+                
+            }
+            
+            @Override
+            public void callPeerRemoved(CallPeerEvent evt)
+            {
+                
+            }
+            
+            @Override
+            public void callPeerAdded(CallPeerEvent evt)
+            {
+                
+            }
+        });
 
         String remoteJid = cd.getUri();
         if (remoteJid.startsWith("xmpp:"))

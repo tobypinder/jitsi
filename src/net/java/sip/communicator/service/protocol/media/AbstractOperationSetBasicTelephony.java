@@ -116,7 +116,7 @@ public abstract class AbstractOperationSetBasicTelephony
      * Always throws an exception.
      */
     @Override
-    public Call createCall(ConferenceDescription cd)
+    public Call createCall(ConferenceDescription cd, ChatRoom chatRoom)
         throws OperationFailedException
     {
         throw new OperationFailedException("Creating a call with a" +

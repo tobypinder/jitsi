@@ -157,6 +157,12 @@ public class ChatRoomJabberImpl
      * The last <tt>Presence</tt> packet we sent to the MUC.
      */
     private Presence lastPresenceSent = null;
+    
+    /**
+     * 
+     */
+    private List<CallJabberImpl> chatRoomConferenceCalls 
+        = new ArrayList<CallJabberImpl>();
 
     /**
      * Creates an instance of a chat room that has been.
@@ -333,6 +339,31 @@ public class ChatRoomJabberImpl
         {
             memberListeners.remove(listener);
         }
+    }
+
+
+    /**
+     * Adds a <tt>CallJabberImpl</tt> instance to the list of conference calls
+     * associated with the room.
+     * 
+     * @param call the call to add
+     */
+    public synchronized void addConferenceCall(CallJabberImpl call)
+    {
+        if(!chatRoomConferenceCalls.contains(call))
+            chatRoomConferenceCalls.add(call);
+    }
+
+    /**
+     * Removes a <tt>CallJabberImpl</tt> instance from the list of conference 
+     * calls associated with the room.
+     * 
+     * @param call the call to remove.
+     */
+    public synchronized void removeConferenceCall(CallJabberImpl call)
+    {
+        if(chatRoomConferenceCalls.contains(call))
+            chatRoomConferenceCalls.remove(call);
     }
 
     /**
@@ -757,6 +788,12 @@ public class ChatRoomJabberImpl
      */
     public void leave()
     {
+        OperationSetBasicTelephonyJabberImpl basicTelephony
+            = (OperationSetBasicTelephonyJabberImpl) provider
+                .getOperationSet(OperationSetBasicTelephony.class);
+        ActiveCallsRepositoryJabberGTalkImpl<CallJabberImpl, CallPeerJabberImpl> 
+            activeRepository = basicTelephony.getActiveCallsRepository();
+        
         if(this.publishedConference != null)
         {
             
@@ -764,21 +801,32 @@ public class ChatRoomJabberImpl
             
             if (callid != null)
             {
-                OperationSetBasicTelephonyJabberImpl basicTelephony
-                    = (OperationSetBasicTelephonyJabberImpl) provider
-                        .getOperationSet(OperationSetBasicTelephony.class);
-                CallJabberImpl call
-                    = basicTelephony.getActiveCallsRepository()
-                        .findCallId(callid);
+                CallJabberImpl call = activeRepository.findCallId(callid);
                 for(CallPeerJabberImpl peer : call.getCallPeerList())
                 {
                     peer.hangup(false, null, null);
                 }
             }
             
-            clearCachedConferenceDescriptionList();
-            
         }
+        
+        List<CallJabberImpl> tmpConferenceCalls;
+        synchronized (chatRoomConferenceCalls)
+        {
+            logger.info("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
+            tmpConferenceCalls 
+                = new ArrayList<CallJabberImpl>(chatRoomConferenceCalls);
+            chatRoomConferenceCalls.clear();
+            logger.info("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA2222222222");
+        }
+        
+        for(CallJabberImpl call : tmpConferenceCalls)
+        {
+            for(CallPeerJabberImpl peer : call.getCallPeerList())
+                peer.hangup(false, null, null);
+        }
+        
+        clearCachedConferenceDescriptionList();
         
         XMPPConnection connection = this.provider.getConnection();
         try
