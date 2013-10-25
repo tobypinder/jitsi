@@ -20,6 +20,7 @@ import org.jivesoftware.smack.*;
 import org.jivesoftware.smack.filter.*;
 import org.jivesoftware.smack.packet.*;
 import org.jivesoftware.smack.packet.IQ.Type;
+import org.jivesoftware.smack.util.*;
 import org.jivesoftware.smackx.packet.*;
 
 /**
@@ -478,6 +479,17 @@ public class OperationSetTelephonyConferencingJabberImpl
     @Override
     protected String getLocalEntity(CallPeer callPeer)
     {
+        JingleIQ sessionIQ = ((CallPeerJabberImpl)callPeer).getSessionIQ();
+        String from = sessionIQ.getFrom();
+        String chatRoomName = StringUtils.parseBareAddress(from);
+        OperationSetMultiUserChatJabberImpl opSetMUC
+            = (OperationSetMultiUserChatJabberImpl)parentProvider.getOperationSet(OperationSetMultiUserChat.class);
+        ChatRoom room = null;
+        room = opSetMUC.getChatRoom(chatRoomName);
+        
+        if(room != null)
+            return "xmpp:" + chatRoomName + "/" + room.getUserNickname();
+        
         return "xmpp:" + parentProvider.getOurJID();
     }
 
