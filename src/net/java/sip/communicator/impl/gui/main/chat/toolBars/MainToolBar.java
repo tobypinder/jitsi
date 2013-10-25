@@ -119,13 +119,6 @@ public class MainToolBar
                     ImageLoader.getImage(ImageLoader.CHAT_CONFIGURE_ICON));
 
     /**
-     * The "create conference" button.
-     */
-    private final ChatToolbarButton createConferenceButton
-            = new ChatToolbarButton(
-                    ImageLoader.getImage(ImageLoader.CONFERENCE_ICON));
-
-    /**
      * The desktop sharing button.
      */
     private final ChatToolbarButton desktopSharingButton
@@ -201,13 +194,16 @@ public class MainToolBar
         this.add(callVideoButton);
         this.add(desktopSharingButton);
         this.add(sendFileButton);
-        this.add(createConferenceButton);
 
         ChatPanel chatPanel = chatContainer.getCurrentChat();
         if (chatPanel == null
             || !(chatPanel.getChatSession() instanceof MetaContactChatSession))
             sendFileButton.setEnabled(false);
 
+        if (chatPanel == null
+            || !(chatPanel.getChatSession() instanceof ConferenceChatSession))
+            desktopSharingButton.setEnabled(false);
+        
         this.addSeparator();
 
         SIPCommMenuBar historyMenuBar = new SIPCommMenuBar();
@@ -263,6 +259,7 @@ public class MainToolBar
                 "service.gui.CALL_CONTACT"));
 
         setCallButtonsName();
+        setCallButtonsIcons();
         
         this.desktopSharingButton.setName("desktop");
         this.desktopSharingButton.setToolTipText(
@@ -276,11 +273,6 @@ public class MainToolBar
         this.sendFileButton.setName("sendFile");
         this.sendFileButton.setToolTipText(
             GuiActivator.getResources().getI18NString("service.gui.SEND_FILE"));
-
-        this.createConferenceButton.setName("createConference");
-        this.createConferenceButton.setToolTipText(
-                GuiActivator.getResources()
-                        .getI18NString("service.gui.CREATE_CONFERENCE_CALL"));
 
         this.previousButton.setName("previous");
         this.previousButton.setToolTipText(
@@ -297,7 +289,6 @@ public class MainToolBar
         desktopSharingButton.addActionListener(this);
         optionsButton.addActionListener(this);
         sendFileButton.addActionListener(this);
-        createConferenceButton.addActionListener(this);
         previousButton.addActionListener(this);
         nextButton.addActionListener(this);
     }
@@ -352,9 +343,9 @@ public class MainToolBar
 
             leaveChatRoomButton.setEnabled(
                 chatPanel.chatSession instanceof ConferenceChatSession);
-
-            createConferenceButton.setEnabled(
-                    chatPanel.chatSession instanceof ConferenceChatSession);
+            
+            desktopSharingButton.setEnabled(
+                !(chatPanel.chatSession instanceof ConferenceChatSession));
 
             inviteButton.setEnabled(
                 chatPanel.findInviteChatTransport() != null);
@@ -369,6 +360,7 @@ public class MainToolBar
             changeHistoryButtonsState(chatPanel);
             
             setCallButtonsName();
+            setCallButtonsIcons();
         }
     }
 
@@ -607,9 +599,6 @@ public class MainToolBar
         sendFileButton.setIconImage(ImageLoader.getImage(
                 ImageLoader.SEND_FILE_ICON));
 
-        createConferenceButton.setIconImage(ImageLoader.getImage(
-                ImageLoader.CONFERENCE_ICON));
-
         fontButton.setIconImage(ImageLoader.getImage(
                 ImageLoader.FONT_ICON));
 
@@ -622,14 +611,13 @@ public class MainToolBar
         leaveChatRoomButton.setIconImage(ImageLoader.getImage(
                 ImageLoader.LEAVE_ICON));
 
-        callButton.setIconImage(ImageLoader.getImage(
-                ImageLoader.CHAT_CALL));
-
         desktopSharingButton.setIconImage(ImageLoader.getImage(
             ImageLoader.CHAT_DESKTOP_SHARING));
 
         optionsButton.setIconImage(ImageLoader.getImage(
                 ImageLoader.CHAT_CONFIGURE_ICON));
+        
+        setCallButtonsIcons();
     }
 
     /**
@@ -721,7 +709,7 @@ public class MainToolBar
     /**
      * Sets the names of the call buttons depending on the chat session type.
      */
-    public void setCallButtonsName()
+    private void setCallButtonsName()
     {
         if(chatSession instanceof ConferenceChatSession)
         {
@@ -734,6 +722,30 @@ public class MainToolBar
             callVideoButton.setName("callVideo");
         }
     }
+
+    /**
+     * Sets the icons of the call buttons depending on the chat session type.
+     */
+    private void setCallButtonsIcons()
+    {
+        if(chatSession instanceof ConferenceChatSession)
+        {
+            callButton.setIconImage(ImageLoader.getImage(
+                ImageLoader.CHAT_ROOM_CALL));
+            callVideoButton.setIconImage(ImageLoader.getImage(
+                ImageLoader.CHAT_ROOM_VIDEO_CALL));
+        }
+        else
+        {
+            callButton.setIconImage(ImageLoader.getImage(
+                ImageLoader.CHAT_CALL));
+            callVideoButton.setIconImage(ImageLoader.getImage(
+                ImageLoader.CHAT_VIDEO_CALL));
+        }
+        callButton.repaint();
+        callVideoButton.repaint();
+    }
+
     /**
      * Searches for phone numbers in <tt>MetaContact/tt> operation sets.
      * And changes the call button enable/disable state.
