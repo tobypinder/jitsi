@@ -328,6 +328,8 @@ public class ChatConferenceCallDialog
             (createConferenceButton.isSelected()? createPanel : 
                 joinPanel), 
             BorderLayout.CENTER);
+        if(joinConferenceButton.isSelected())
+            this.chatConferenceListPanel.setSelectedIndex(0);
         pack();
     }
     

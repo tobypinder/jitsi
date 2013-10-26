@@ -237,7 +237,16 @@ public class ChatRoomConferenceCallsListPanel
     public void initConferences()
     {
         conferenceCallsListModel.initConferences();
-        conferenceCallList.setSelectedIndex(0);
+        setSelectedIndex(0);
+    }
+    
+    /**
+     * Selects an item from the list.
+     * @param index the index of the item to be selected.
+     */
+    public void setSelectedIndex(int index)
+    {
+        conferenceCallList.setSelectedIndex(index);
     }
 
     /**
