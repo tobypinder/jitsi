@@ -52,21 +52,16 @@ public class ChatConferenceCallsListModels
         if(descriptor instanceof ChatRoomWrapper)
         {
             ChatRoom chatRoom = ((ChatRoomWrapper)descriptor).getChatRoom();
-            for(ChatRoomMember member : chatRoom.getMembers())
+            for(ConferenceDescription cd : 
+                chatRoom.getCachedConferenceDescriptions().values())
             {
-                ConferenceDescription cd 
-                    = chatRoom.findCachedConferenceDescription(
-                        member.getName());
-                if(cd != null)
+                if(cd.isAvailable())
                 {
-                    if(cd.isAvailable())
-                    {
-                       addElement(cd);
-                    }
-                    else
-                    {
-                       removeElement(cd);
-                    }
+                   addElement(cd);
+                }
+                else
+                {
+                   removeElement(cd);
                 }
             }
         }

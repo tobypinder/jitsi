@@ -563,24 +563,15 @@ public interface ChatRoom
             ChatRoomConferencePublishedListener listener);
     
     /**
-     * Finds <tt>ConferenceDescription</tt> instance that was published by 
-     * specified member from the list of cached <tt>ConferenceDescription</tt> 
-     * instances.
-     * 
-     * @param memberName the name of the member.
-     * @return the <tt>ConferenceDescription</tt> instance
+     * Returns cached <tt>ConferenceDescription</tt> instances.
+     * @return the cached <tt>ConferenceDescription</tt> instances.
      */
-    public ConferenceDescription findCachedConferenceDescription(
-        String memberName);
+    public Map<String, ConferenceDescription> getCachedConferenceDescriptions();
     
     /**
-     * Removes <tt>ConferenceDescription</tt> instance that was published by 
-     * specified member from the list of cached <tt>ConferenceDescription</tt> 
-     * instances.
-     * 
-     * @param memberName the name of the member.
-     * @return the <tt>ConferenceDescription</tt> instance that was removed.
+     * Returns the number of cached <tt>ConferenceDescription</tt> instances.
+     * @return the number of cached <tt>ConferenceDescription</tt> instances.
      */
-    public ConferenceDescription removeCachedConferenceDescription(
-        String memberName);
+    public int getCachedConferenceDescriptionSize();
+    
 }

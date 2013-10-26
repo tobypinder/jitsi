@@ -241,7 +241,7 @@ public class ChatPanel
                 = new TransparentPanel(new BorderLayout());
             contactsPanel.setMinimumSize(chatContactsListsPanelSize);
             contactsPanel.setPreferredSize(chatContactsListsPanelSize);
-            setConferencesPanelVisible(false);
+            
             conferencePanel.setMinimumSize(chatConferencesListsPanelSize);
             conferencePanel.setPreferredSize(chatConferencesListsPanelSize);
             
@@ -362,9 +362,12 @@ public class ChatPanel
             confSession.addLocalUserRoleListener(this);
             confSession.addMemberRoleListener(this);
 
-            ((ChatRoomWrapper) chatSession.getDescriptor())
-                .getChatRoom().addMemberPropertyChangeListener(this);
+            ChatRoom room 
+                = ((ChatRoomWrapper) chatSession.getDescriptor()).getChatRoom();
+            room.addMemberPropertyChangeListener(this);
 
+            setConferencesPanelVisible(
+                room.getCachedConferenceDescriptionSize() > 0);
             subjectPanel
                 = new ChatRoomSubjectPanel((ConferenceChatSession) chatSession);
 

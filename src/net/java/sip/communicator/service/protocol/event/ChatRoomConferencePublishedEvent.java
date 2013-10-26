@@ -36,11 +36,6 @@ public class ChatRoomConferencePublishedEvent
     private final ConferenceDescription conferenceDescription;
     
     /**
-     * The number of announced conference.
-     */
-    private final int activeConferencesCount;
-    
-    /**
      * The type of the event. It can be <tt>CONFERENCE_DESCRIPTION_SENT</tt> or 
      * <tt>CONFERENCE_DESCRIPTION_RECEIVED</tt>.
      */
@@ -64,14 +59,12 @@ public class ChatRoomConferencePublishedEvent
      * <tt>ConferenceDescription</tt>
      * @param conferenceDescription The <tt>ConferenceDescription</tt> that was
      * published.
-     * @param activeConferencesCount the number of announced conference.
      */
     public ChatRoomConferencePublishedEvent(
             int eventType,
             ChatRoom chatRoom,
             ChatRoomMember member,
-            ConferenceDescription conferenceDescription,
-            int activeConferencesCount)
+            ConferenceDescription conferenceDescription)
     {
         super(chatRoom);
         
@@ -79,7 +72,6 @@ public class ChatRoomConferencePublishedEvent
         this.chatRoom = chatRoom;
         this.member = member;
         this.conferenceDescription = conferenceDescription;
-        this.activeConferencesCount = activeConferencesCount;
     }
 
     /**
@@ -109,15 +101,6 @@ public class ChatRoomConferencePublishedEvent
     public ConferenceDescription getConferenceDescription()
     {
         return conferenceDescription;
-    }
-    
-    /**
-     * Returns the number of announced conferences.
-     * @return the number of announced conferences.
-     */
-    public int getActiveConferencesCount()
-    {
-        return activeConferencesCount;
     }
     
     /**

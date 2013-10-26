@@ -64,35 +64,31 @@ public abstract class AbstractChatRoom
             conferencePublishedListeners.remove(listener);
         }
     }
-    
+
     /**
-     * Removes <tt>ConferenceDescription</tt> instance that was published by 
-     * specified member from the list of cached <tt>ConferenceDescription</tt> 
-     * instances.
-     * 
-     * @param memberName the name of the member.
-     * @return the <tt>ConferenceDescription</tt> instance that was removed.
+     * Returns cached <tt>ConferenceDescription</tt> instances.
+     * @return the cached <tt>ConferenceDescription</tt> instances.
      */
-    public synchronized ConferenceDescription removeCachedConferenceDescription(
-        String memberName)
+    public Map<String, ConferenceDescription> getCachedConferenceDescriptions()
     {
-        return cachedConferenceDescriptions.remove(memberName);
+        Map<String, ConferenceDescription> tmpCachedConferenceDescriptions;
+        synchronized (cachedConferenceDescriptions)
+        {
+            tmpCachedConferenceDescriptions 
+                = new HashMap<String, ConferenceDescription>(
+                    cachedConferenceDescriptions);
+        }
+        return tmpCachedConferenceDescriptions;
     }
 
     /**
-     * Finds <tt>ConferenceDescription</tt> instance that was published by 
-     * specified member from the list of cached <tt>ConferenceDescription</tt> 
-     * instances.
-     * 
-     * @param memberName the name of the member.
-     * @return the <tt>ConferenceDescription</tt> instance
+     * Returns the number of cached <tt>ConferenceDescription</tt> instances.
+     * @return the number of cached <tt>ConferenceDescription</tt> instances.
      */
-    public synchronized ConferenceDescription findCachedConferenceDescription(
-        String memberName)
+    public synchronized int getCachedConferenceDescriptionSize()
     {
-        return cachedConferenceDescriptions.get(memberName);
+        return cachedConferenceDescriptions.size();
     }
-
 
     /**
      * Creates the corresponding <tt>ChatRoomConferencePublishedEvent</tt> and
@@ -110,7 +106,7 @@ public abstract class AbstractChatRoom
     {
         ChatRoomConferencePublishedEvent evt
                 = new ChatRoomConferencePublishedEvent(eventType, this, member, 
-                    cd, cachedConferenceDescriptions.size());
+                    cd);
 
         List<ChatRoomConferencePublishedListener> listeners;
         synchronized (conferencePublishedListeners)
@@ -139,7 +135,6 @@ public abstract class AbstractChatRoom
         {
             if(cachedConferenceDescriptions.containsKey(participantName))
                 return false;
-            
             cachedConferenceDescriptions.put(participantName, cd);
         }
         else
@@ -151,7 +146,7 @@ public abstract class AbstractChatRoom
                 || !cd.compareConferenceDescription(cachedDescription))
                 return false;
             
-            removeCachedConferenceDescription(participantName);
+            cachedConferenceDescriptions.remove(participantName);
         }
         
         return true;

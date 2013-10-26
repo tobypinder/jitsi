@@ -678,7 +678,8 @@ public class ConferenceChatSession
             return;
         }
         
-        if(!evt.getChatRoom().equals(chatRoomWrapper.getChatRoom()))
+        ChatRoom room = evt.getChatRoom();
+        if(!room.equals(chatRoomWrapper.getChatRoom()))
             return;
         
         ConferenceDescription cd = evt.getConferenceDescription();
@@ -690,8 +691,8 @@ public class ConferenceChatSession
         else if(evt.getType() 
             == ChatRoomConferencePublishedEvent.CONFERENCE_DESCRIPTION_RECEIVED)
         {
-            updateChatConferences(evt.getChatRoom(), evt.getMember(), cd , 
-                evt.getActiveConferencesCount());
+            updateChatConferences(room, evt.getMember(), cd , 
+                room.getCachedConferenceDescriptionSize());
             
         }
         
